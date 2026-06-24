@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چت‌بات پشتیبانی - ExcelBot Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            text-align: center;
+            color: white;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 ExcelBot Pro</h1>
+        <p>برای تست چت‌بات، روی دکمه پایین سمت راست کلیک کن!</p>
+        <button class="btn" onclick="openChat()">💬 باز کردن چت</button>
+    </div>
+
+    <!-- ====== ویجت چت ====== -->
+    <div id="chat-widget">
+        <!-- دکمه شناور -->
+        <button id="chat-toggle" onclick="toggleChat()">
+            💬
+        </button>
+
+        <!-- پنجره چت -->
+        <div id="chat-window" style="display: none;">
+            <div id="chat-header">
+                <span>🤖 پشتیبانی آنلاین</span>
+                <button onclick="toggleChat()">✕</button>
+            </div>
+            <div id="chat-messages">
+                <div class="message bot">
+                    سلام! 👋 به پشتیبانی آنلاین خوش آمدید. چطور می‌توانم کمک کنم؟
+                </div>
+            </div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="پیام خود را بنویسید..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">➤</button>
+            </div>
+            <div id="chat-typing" style="display: none;">دستیار در حال تایپ...</div>
+        </div>
+    </div>
+
+    <style>
+        /* ===== استایل ویجت چت ===== */
+        #chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* دکمه شناور */
+        #chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        #chat-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* پنجره چت */
+        #chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 450px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* هدر چت */
+        #chat-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            border-radius: 15px 15px 0 0;
+        }
+        #chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* پیام‌ها */
+        #chat-messages {
+            flex: 1;
+            padding: 15px 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
+        }
+        .message.user {
+            background: #667eea;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        .message.bot {
+            background: #e9ecef;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ورودی */
+        #chat-input-area {
+            display: flex;
+            padding: 10px 15px;
+            border-top: 1px solid #ddd;
+            background: white;
+            gap: 10px;
+        }
+        #chat-input-area input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+        }
+        #chat-input-area input:focus {
+            border-color: #667eea;
+        }
+        #chat-input-area button {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #chat-input-area button:hover {
+            transform: scale(1.05);
+        }
+
+        #chat-typing {
+            padding: 10px 20px;
+            color: #888;
+            font-size: 13px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+    </style>
+
+    <script>
+        // ===== منطق ویجت چت =====
+        const API_URL = 'http://localhost:8000/api/chat';
+        let chatHistory = [];
+        let isOpen = false;
+
+        function toggleChat() {
+            const window = document.getElementById('chat-window');
+            const toggle = document.getElementById('chat-toggle');
+            isOpen = !isOpen;
+            window.style.display = isOpen ? 'flex' : 'none';
+            toggle.textContent = isOpen ? '✕' : '💬';
+            if (isOpen) {
+                document.getElementById('chat-input').focus();
+            }
+        }
+
+        function openChat() {
+            if (!isOpen) toggleChat();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // نمایش پیام کاربر
+            addMessage(message, 'user');
+            input.value = '';
+
+            // نمایش تایپینگ
+            showTyping(true);
+
+            // ارسال به سرور
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: message,
+                    history: chatHistory,
+                    top_k: 3
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showTyping(false);
+                const answer = data.answer || 'پاسخی یافت نشد.';
+                addMessage(answer, 'bot');
+                
+                // ذخیره تاریخچه
+                chatHistory.push({ role: 'user', content: message });
+                chatHistory.push({ role: 'assistant', content: answer });
+            })
+            .catch(error => {
+                showTyping(false);
+                console.error('Error:', error);
+                addMessage('❌ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.', 'bot');
+            });
+        }
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            div.textContent = text;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTyping(show) {
+            const typing = document.getElementById('chat-typing');
+            typing.style.display = show ? 'block' : 'none';
+        }
+
+        // اضافه کردن قابلیت باز کردن با کلیک روی دکمه
+        console.log('✅ ویجت چت بارگذاری شد!');
+    </script>
+</body>
+</html>
