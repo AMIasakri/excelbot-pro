@@ -231,9 +231,9 @@ Creator: Amir Askari
 
 For support, feature requests, or commercial licensing:
 
-Email: your-email@example.com
+Email: amir.as.7257@gmail.com
 
-GitHub: github.com/YourUsername
+GitHub: https://github.com/AMIasakr
 
 Website: your-website.com
 
